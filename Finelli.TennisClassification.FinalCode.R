@@ -19,8 +19,9 @@ if(!require(purrr)) install.packages("purr", repos = "http://cran.us.r-project.o
 if(!require(ggrepel)) install.packages("ggrepel", repos = "http://cran.us.r-project.org")
 if(!require(e1071)) install.packages("e1071", repos = "http://cran.us.r-project.org")
 if(!require(randomForest)) install.packages("randomForest", repos = "http://cran.us.r-project.org")
-if(!require(Rborist)) install.packages("Rborist1", repos = "http://cran.us.r-project.org")
+if(!require(Rborist)) install.packages("Rborist", repos = "http://cran.us.r-project.org")
 if(!require(rpart.plot)) install.packages("rpart.plot", repos = "http://cran.us.r-project.org")
+if(!require(ggforce)) install.packages("ggforce", repos = "http://cran.us.r-project.org")
 
 #load libraries
 library(tidyverse)
@@ -33,6 +34,7 @@ library(ggrepel)
 library(randomForest)
 library(Rborist)
 library(rpart.plot)
+library(ggforce)
 
 
 #download raw data files
@@ -337,7 +339,10 @@ nrow(tpbyset)
     geom_point(alpha = .1)
   
   #same graph, by set
-  tpbs_train %>% ggplot(aes(AvgRC, AvgCDist, color = Tournament)) + 
+  tpbs_train %>% ggplot(aes(AvgRC, AvgCDist, color = Tournament)) +
+    geom_ellipse(color="#F8766D", aes(x0 = 4.5, y0 = 23, a = .6, b = 9, angle = -pi/16)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = 2.1, y0 = 15.5, a = .35, b = 4.5, angle = -pi/48)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = 4, y0 = 16, a = .6, b = 4.5, angle = -pi/10)) +
     geom_point(alpha = .5)
   
   #same graph, by set
@@ -345,11 +350,14 @@ nrow(tpbyset)
     geom_point(alpha = .5)
   
   #same graph, shows that net points are indeed the cause!
-  tpbs_train %>% ggplot(aes(AvgRC, NetPct, color = Tournament)) + 
+  tpbs_train %>% ggplot(aes(AvgRC, NetPct, color = Tournament)) +
+    geom_ellipse(aes(x0 = 2.1, y0 = .2, a = .4, b = .175, angle = pi/8)) +
     geom_point(alpha = .5)
   
   #really good gender by set graph 1
-  tpbs_train %>% ggplot(aes(AcePct, NetPct, color = Gender)) + 
+  tpbs_train %>% ggplot(aes(AcePct, NetPct, color = Gender)) +
+    geom_ellipse(color="#F8766D", aes(x0 = .125, y0 = .275, a = .1, b = .2, angle = pi/6)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = .04, y0 = .11, a = .06, b = .12, angle = pi/12)) +
     geom_point(alpha = .5)
   
   #really good gender by set graph 2

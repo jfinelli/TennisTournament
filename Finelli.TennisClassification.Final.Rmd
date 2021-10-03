@@ -64,8 +64,9 @@ if(!require(purrr)) install.packages("purr", repos = "http://cran.us.r-project.o
 if(!require(ggrepel)) install.packages("ggrepel", repos = "http://cran.us.r-project.org")
 if(!require(e1071)) install.packages("e1071", repos = "http://cran.us.r-project.org")
 if(!require(randomForest)) install.packages("randomForest", repos = "http://cran.us.r-project.org")
-if(!require(Rborist)) install.packages("Rborist1", repos = "http://cran.us.r-project.org")
+if(!require(Rborist)) install.packages("Rborist", repos = "http://cran.us.r-project.org")
 if(!require(rpart.plot)) install.packages("rpart.plot", repos = "http://cran.us.r-project.org")
+if(!require(ggforce)) install.packages("ggforce", repos = "http://cran.us.r-project.org")
 
 #load libraries
 library(tidyverse)
@@ -78,6 +79,7 @@ library(ggrepel)
 library(randomForest)
 library(Rborist)
 library(rpart.plot)
+library(ggforce)
 ```
 
 We begin by accessing the data files for all points in singles play (for both men and women) from the US Open in 2017 and Wimbledon in 2021.  GitHub URLs are identified in the attached code, but are not shown here for brevity and formatting.  We choose these two specific tournament-year combinations because they contain the most complete information about the distance traveled by each player during each point, and we suspect this data will be useful.
@@ -394,10 +396,13 @@ We next try to articulate better the tournament-based gaps in rally count and di
 #by set
   tpbs_train %>% ggplot(aes(AvgRC, AvgCDist, color = Tournament, shape = Tournament)) + 
     geom_point(alpha = .5) +
+    geom_ellipse(color="#F8766D", aes(x0 = 4.5, y0 = 23, a = .6, b = 9, angle = -pi/16)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = 2.1, y0 = 15.5, a = .35, b = 4.5, angle = -pi/48)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = 4, y0 = 16, a = .6, b = 4.5, angle = -pi/10)) +
   ggtitle("Sets by average distance and rally count, by tournament")
 ```
 
-Here, we quickly notice that sets at Wimbledon fall into two visually distinct categories: those with low average rally totals but higher per-stroke distances covered, and those with longer rallies but lower per-stroke distances.  This could be the result of the "serve-and-volley" style of play, popular at Wimbledon, in which the server runs up to the net right after serving, covering distance but shortening rally count.
+Here, we notice that sets at Wimbledon (circled in green) fall into two visually distinct categories: those with low average rally totals but higher per-stroke distances covered, and those with longer rallies but lower per-stroke distances.  This could be the result of the "serve-and-volley" style of play, popular at Wimbledon, in which the server runs up to the net right after serving, covering distance but shortening rally count.
 
 Sure enough, when plotting rally count and net attack rate together, we can see that this serve-and-volley pattern is indeed popular at Wimbledon and stands out visually.  This will likely help us as we classify.
 
@@ -405,16 +410,19 @@ Sure enough, when plotting rally count and net attack rate together, we can see 
 #same graph, shows that serve and volley points look different
   tpbs_train %>% ggplot(aes(AvgRC, NetPct, color = Tournament, shape = Tournament)) + 
     geom_point(alpha = .5) +
+  geom_ellipse(aes(x0 = 2.1, y0 = .2, a = .4, b = .175, angle = pi/8)) +
   ggtitle("Sets by net presence and rally count, by tournament")
 ```
 
 ## Gender-based distinctions
 
-We see a similarly helpful result when we explore gender-based distinctions in plotting sets by ace and net attack rates.  As is visually clear, the sets with the highest net attack and ace rates (and especially both together) are almost exclusively men's sets.
+We see a similarly helpful result when we explore gender-based distinctions in plotting sets by ace and net attack rates.  As is visually clear, the sets with the highest net attack and ace rates (and especially both together, circled in red below) are almost exclusively men's sets.
 \newline
 ```{r ace and net by gender, echo=FALSE, fig.height=3.75, fig.width = 5.5, fig.align="center"}
 tpbs_train %>% ggplot(aes(AcePct, NetPct, color = Gender, shape = Gender)) + 
     geom_point(alpha = .5) +
+    geom_ellipse(color="#F8766D", aes(x0 = .125, y0 = .275, a = .1, b = .2, angle = pi/6)) +
+    geom_ellipse(color="#00BFC4", aes(x0 = .04, y0 = .11, a = .06, b = .12, angle = pi/12)) +
   ggtitle("Sets by ace % and net presence, by gender")
 ```
 
